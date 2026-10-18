@@ -17,7 +17,7 @@ pub struct TrackingFile {
 }
 
 /// Represents the file storing entries of ignored repositories
-pub struct IgnoreFile {
+pub struct IgnoredFile {
     pub path: String,
     pub contents: String
 }
