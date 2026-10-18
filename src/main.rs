@@ -148,7 +148,7 @@ async fn main() {
             }
         },
         Commands::Ignore { repos } => {
-            
+            // TODO: write fn ignore in core/api.rs and add it here
         },
         Commands::Check { repos, all, status, remotes } => {
             if *all {
