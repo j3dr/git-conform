@@ -56,6 +56,11 @@ pub enum Commands {
         #[arg(default_value_t = false)]
         all: bool
     },
+    /// Prevents specified repositories from being added for tracking by the `scan` command
+    Ignore {
+        #[arg(required = true)]
+        repos: Vec<String>
+    },
     /// Inspect specified repositories
     Check {
         #[arg(required = true, group = "repositories")]

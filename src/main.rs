@@ -147,6 +147,9 @@ async fn main() {
                 handle_error(&e, 5);
             }
         },
+        Commands::Ignore { repos } => {
+            
+        },
         Commands::Check { repos, all, status, remotes } => {
             if *all {
                 if let Err(e) = check_all(&tracking_file, &[*status, *remotes]).await {
