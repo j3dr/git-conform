@@ -15,6 +15,7 @@ use crate::core::api::{
 use crate::utils::{
     APP_NAME,
     TrackingFile,
+    IgnoredFile,
     handle_error,
     path_is_repo
 };
@@ -30,9 +31,14 @@ use colored::Colorize;
 #[tokio::main]
 async fn main() {
     // Obtain the path to user's home directory,
-    // the tracking file and it's contents
+    // the tracking file, the ignored file and their contents
 
     let mut tracking_file = TrackingFile {
+        path: String::new(),
+        contents: String::new()
+    };
+
+    let mut ignored_file = IgnoredFile {
         path: String::new(),
         contents: String::new()
     };
@@ -45,6 +51,7 @@ async fn main() {
 
             let app_data_dir = format!("{home_dir}/.local/share/{APP_NAME}");
             tracking_file.path = format!("{app_data_dir}/tracked");
+            ignored_file.path = format!("{app_data_dir}/ignored");
 
             // Create the application data directory if one doesn't already exist
             match fs::create_dir_all(&app_data_dir) {
@@ -78,6 +85,11 @@ async fn main() {
                     },
                     Err(e) => handle_error(format!("{}: {e}", tracking_file.path).as_str(), 1)
                 };
+            }
+
+            // Read the ignored file contents if it exists
+            if let Ok(str) = fs::read_to_string(&ignored_file.path) {
+                ignored_file.contents = str;
             }
         }
         else {
