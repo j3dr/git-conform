@@ -59,9 +59,9 @@ async fn main() {
                 Err(e) => handle_error(format!("{app_data_dir}: {e}").as_str(), 1)
             };
 
+            // Update the tracking file, push only the paths
+            // that are still git repositories
             if let Ok(str) = fs::read_to_string(&tracking_file.path) {
-                // Update the tracking file, push only the paths
-                // that are still git repositories
                 for line in str.lines() {
                     match path_is_repo(line) {
                         Ok(is_repo) => {
