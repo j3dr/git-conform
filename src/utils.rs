@@ -16,6 +16,12 @@ pub struct TrackingFile {
     pub contents: String
 }
 
+/// Represents the file storing entries of ignored repositories
+pub struct IgnoreFile {
+    pub path: String,
+    pub contents: String
+}
+
 /// Checks if a given repository has an entry in the tracking file
 #[allow(clippy::must_use_candidate)]
 pub fn repo_is_tracked(repo: &str, track_file_contents: &str) -> bool {
