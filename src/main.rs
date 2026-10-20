@@ -153,6 +153,7 @@ async fn main() {
                 handle_error(&e, 6);
             }
         },
+        // TODO: add sort of 'unignore' command
         Commands::Check { repos, all, status, remotes } => {
             if *all {
                 if let Err(e) = check_all(&tracking_file, &[*status, *remotes]).await {
