@@ -16,7 +16,7 @@ pub struct TrackingFile {
     pub contents: String
 }
 
-/// Represents the file storing entries of ignored repositories
+/// Represents the file storing entries of ignored repositories by the 'scan' command
 pub struct IgnoredFile {
     pub path: String,
     pub contents: String
