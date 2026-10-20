@@ -10,7 +10,7 @@ use crate::core::backend::{
 use crate::utils::{
     APP_NAME,
     TrackingFile,
-    repo_is_tracked,
+    repo_has_entry,
     repos_valid
 };
 
@@ -107,7 +107,7 @@ pub fn add(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Result<(), S
     for repo in repos {
         // Check if the tracking file already
         // contains the git repository path
-        if repo_is_tracked(repo.as_str(), tracking_file.contents.as_str()) {
+        if repo_has_entry(repo.as_str(), tracking_file.contents.as_str()) {
             println!("{APP_NAME}: '{repo}' is already being tracked");
             continue;
         }
@@ -136,7 +136,7 @@ pub fn remove_repos(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Res
     // Repositories validation
     for repo in &repos {
         // Check if the tracking file contains the git repository
-        if !repo_is_tracked(repo.as_str(), tracking_file.contents.as_str()) {
+        if !repo_has_entry(repo.as_str(), tracking_file.contents.as_str()) {
             eprintln!("{APP_NAME}: '{repo}' is not being tracked");
             repos_ok = false;
         }

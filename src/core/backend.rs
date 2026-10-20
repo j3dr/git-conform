@@ -4,7 +4,7 @@ use crate::utils::{
     APP_NAME,
     SPINNER_TICK,
     TrackingFile,
-    repo_is_tracked,
+    repo_has_entry,
     path_is_repo
 };
 
@@ -74,7 +74,7 @@ fn search_core(entry: &DirEntry, mut track_file: &File, track_file_path: &str, t
         if let Some(repo_path) = path.strip_suffix("/.git") {
             // Check if the tracking file already
             // contains the git repository path
-            if repo_is_tracked(repo_path, track_file_contents) {
+            if repo_has_entry(repo_path, track_file_contents) {
                 return Ok(repo)
             }
 
