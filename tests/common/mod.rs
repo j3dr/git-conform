@@ -1,14 +1,19 @@
-use git_conform::utils::{APP_NAME, TrackingFile};
+use git_conform::utils::{APP_NAME, TrackingFile, IgnoredFile};
 
 use std::fs::{self, File};
 use std::process::{Command, Stdio};
 
 #[allow(unused_assignments)]
-pub fn setup() -> Result<(String, TrackingFile, String), String> {
+pub fn setup() -> Result<(String, TrackingFile, IgnoredFile, String), String> {
     // Obtain the path to user's home directory,
-    // the tracking file and it's contents
-
+    // the tracking file and the ignored file
+    
     let mut tracking_file = TrackingFile {
+        path: String::new(),
+        contents: String::new()
+    };
+
+    let mut ignored_file = IgnoredFile {
         path: String::new(),
         contents: String::new()
     };
@@ -22,6 +27,7 @@ pub fn setup() -> Result<(String, TrackingFile, String), String> {
 
             let app_data_dir = format!("{home_dir}/.local/share/{APP_NAME}");
             tracking_file.path = format!("{app_data_dir}/tracked");
+            ignored_file.path = format!("{app_data_dir}/ignored");
 
             // Create the application data directory if one doesn't already exist
             match fs::create_dir_all(&app_data_dir) {
@@ -106,5 +112,5 @@ pub fn setup() -> Result<(String, TrackingFile, String), String> {
         return Err(String::from("Could not find the home directory"));
     }
 
-    Ok((home_dir, tracking_file, tests_dir))
+    Ok((home_dir, tracking_file, ignored_file, tests_dir))
 }

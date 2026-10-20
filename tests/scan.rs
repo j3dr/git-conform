@@ -10,7 +10,7 @@ use serial_test::serial;
 #[test]
 #[serial]
 fn case_scan_dirs_hidden() {
-    let (_home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
     if Path::new(tracking_file.path.as_str()).try_exists().unwrap() {
@@ -53,7 +53,7 @@ fn case_scan_dirs_hidden() {
 #[test]
 #[serial]
 fn case_scan_dirs_no_hidden() {
-    let (_home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
     if Path::new(tracking_file.path.as_str()).try_exists().unwrap() {
@@ -97,7 +97,7 @@ fn case_scan_dirs_no_hidden() {
 #[test]
 #[serial]
 fn case_scan_dirs_non_existent() {
-    let (_home_dir, tracking_file, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let dirs = vec![
@@ -111,7 +111,7 @@ fn case_scan_dirs_non_existent() {
 #[test]
 #[serial]
 fn case_scan_dirs_files() {
-    let (_home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let mut dirs: Vec<String> = Vec::new();
@@ -124,7 +124,7 @@ fn case_scan_dirs_files() {
 #[test]
 #[serial]
 fn case_scan_all() {
-    let (home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
     if Path::new(tracking_file.path.as_str()).try_exists().unwrap() {
@@ -167,7 +167,7 @@ fn case_scan_all() {
 #[test]
 #[serial]
 fn case_scan_dirs_found_new() {
-    let (_home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
     if Path::new(tracking_file.path.as_str()).try_exists().unwrap() {
@@ -191,7 +191,7 @@ fn case_scan_dirs_found_new() {
 #[test]
 #[serial]
 fn case_scan_dirs_found_none() {
-    let (_home_dir, mut tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, mut tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
     if Path::new(tracking_file.path.as_str()).try_exists().unwrap() {
@@ -213,7 +213,7 @@ fn case_scan_dirs_found_none() {
 #[test]
 #[serial]
 fn case_scan_all_found_new() {
-    let (home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
     if Path::new(tracking_file.path.as_str()).try_exists().unwrap() {
@@ -237,7 +237,7 @@ fn case_scan_all_found_new() {
 #[test]
 #[serial]
 fn case_scan_all_found_none() {
-    let (home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+    let (home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
     if Path::new(tracking_file.path.as_str()).try_exists().unwrap() {

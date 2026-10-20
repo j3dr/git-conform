@@ -5,7 +5,7 @@ use git_conform::utils::TrackingFile;
 
 #[tokio::test]
 async fn case_check_repos_real() {
-    let (_home_dir, _track_file_path, tests_dir) = common::setup().unwrap();
+    let (_home_dir, _tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function executes without errors
     let mut repos: Vec<String> = Vec::new();
@@ -18,7 +18,7 @@ async fn case_check_repos_real() {
 
 #[tokio::test]
 async fn case_check_repos_fake() {
-    let (_home_dir, _track_file_path, tests_dir) = common::setup().unwrap();
+    let (_home_dir, _tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let mut repos: Vec<String> = Vec::new();
@@ -31,7 +31,7 @@ async fn case_check_repos_fake() {
 
 #[tokio::test]
 async fn case_check_repos_regular_dirs() {
-    let (_home_dir, _track_file_path, tests_dir) = common::setup().unwrap();
+    let (_home_dir, _tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let mut repos: Vec<String> = Vec::new();
@@ -44,7 +44,7 @@ async fn case_check_repos_regular_dirs() {
 
 #[tokio::test]
 async fn case_check_repos_non_existent() {
-    let (_home_dir, _track_file_path, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, _tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let repos = vec![
@@ -57,7 +57,7 @@ async fn case_check_repos_non_existent() {
 
 #[tokio::test]
 async fn case_check_repos_files() {
-    let (_home_dir, _track_file_path, tests_dir) = common::setup().unwrap();
+    let (_home_dir, _tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let mut repos: Vec<String> = Vec::new();
@@ -69,7 +69,7 @@ async fn case_check_repos_files() {
 
 #[tokio::test]
 async fn case_check_all() {
-    let (_home_dir, mut tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, mut tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = format!("{tests_dir}/repo1\n{tests_dir}/repo2\n{tests_dir}/repo3");
 

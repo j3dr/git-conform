@@ -11,7 +11,7 @@ use serial_test::serial;
 #[test]
 #[serial]
 fn case_remove_repos_all() {
-    let (_home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
 
@@ -37,7 +37,7 @@ fn case_remove_repos_all() {
 #[test]
 #[serial]
 fn case_remove_repos_only_one() {
-    let (_home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
 
@@ -60,7 +60,7 @@ fn case_remove_repos_only_one() {
 #[test]
 #[serial]
 fn case_remove_repos_non_existent() {
-    let (_home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
 
@@ -76,7 +76,7 @@ fn case_remove_repos_non_existent() {
 
 #[test]
 fn case_remove_repos_empty_tracking_file() {
-    let (_home_dir, tracking_file, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function executes without errors
     assert_eq!(remove_repos(vec!["repo2".to_string()], &tracking_file), Err(String::from("No repository is being tracked")));
@@ -85,7 +85,7 @@ fn case_remove_repos_empty_tracking_file() {
 #[test]
 #[serial]
 fn case_remove_all() {
-    let (_home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
 
@@ -102,7 +102,7 @@ fn case_remove_all() {
 
 #[test]
 fn case_remove_all_empty_tracking_file() {
-    let (_home_dir, tracking_file, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function executes without errors
     assert_eq!(remove_all(&tracking_file), Err(String::from("No repository is being tracked")));

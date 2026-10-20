@@ -10,7 +10,7 @@ use serial_test::serial;
 #[test]
 #[serial]
 fn case_add_real() {
-    let (_home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
     if Path::new(tracking_file.path.as_str()).try_exists().unwrap() {
@@ -41,7 +41,7 @@ fn case_add_real() {
 
 #[test]
 fn case_add_fake() {
-    let (_home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let mut repos: Vec<String> = Vec::new();
@@ -54,7 +54,7 @@ fn case_add_fake() {
 
 #[test]
 fn case_add_regular_dirs() {
-    let (_home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let mut repos: Vec<String> = Vec::new();
@@ -67,7 +67,7 @@ fn case_add_regular_dirs() {
 
 #[test]
 fn case_add_non_existent() {
-    let (_home_dir, tracking_file, _tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let repos = vec![
@@ -80,7 +80,7 @@ fn case_add_non_existent() {
 
 #[test]
 fn case_add_files() {
-    let (_home_dir, tracking_file, tests_dir) = common::setup().unwrap();
+    let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
     let mut repos: Vec<String> = Vec::new();
