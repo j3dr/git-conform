@@ -9,6 +9,7 @@ use crate::core::api::{
     add,
     remove_repos,
     remove_all,
+    ignore,
     check_repos,
     check_all
 };
@@ -148,16 +149,18 @@ async fn main() {
             }
         },
         Commands::Ignore { repos } => {
-            // TODO: write fn ignore in core/api.rs and add it here
+            if let Err(e) = ignore(repos.to_owned(), &ignored_file) {
+                handle_error(&e, 6);
+            }
         },
         Commands::Check { repos, all, status, remotes } => {
             if *all {
                 if let Err(e) = check_all(&tracking_file, &[*status, *remotes]).await {
-                    handle_error(&e, 6);
+                    handle_error(&e, 7);
                 }
             }
             else if let Err(e) = check_repos(repos.to_owned(), &[*status, *remotes]).await {
-                handle_error(&e, 6);
+                handle_error(&e, 7);
             }
         }
     };

@@ -10,6 +10,7 @@ use crate::core::backend::{
 use crate::utils::{
     APP_NAME,
     TrackingFile,
+    IgnoredFile,
     repo_has_entry,
     repos_valid
 };
@@ -181,6 +182,38 @@ pub fn remove_all(tracking_file: &TrackingFile) -> Result<(), String> {
     }
 
     fs::remove_file(tracking_file.path.clone()).map_err(|e| format!("{}: {e}", tracking_file.path))?;
+
+    Ok(())
+}
+
+/// Writes the paths of the specified repos to the ignored file
+pub fn ignore(mut repos: Vec<String>, ignored_file: &IgnoredFile) -> Result<(), String> {
+    // Remove duplicates
+    repos.sort_unstable();
+    repos.dedup();
+
+    repos = repos_valid(repos.as_slice())?;
+
+    // Open/create the ignored file for writing
+    let mut ign_file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(ignored_file.path.clone())
+        .map_err(|e| format!("{}: {e}", ignored_file.path))?;
+
+    for repo in repos {
+        // Check if the ignored file already
+        // contains the git repository path
+        if repo_has_entry(repo.as_str(), ignored_file.contents.as_str()) {
+            println!("{APP_NAME}: '{repo}' is already blacklisted");
+            continue;
+        }
+
+        // Add the path of the git repository to the ignored file
+        ign_file.write_all(
+            format!("{repo}\n").as_bytes())
+            .map_err(|e| format!("{}: {e}", ignored_file.path))?;
+    }
 
     Ok(())
 }
