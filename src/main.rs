@@ -138,7 +138,6 @@ async fn main() {
                     handle_error(&e, 3);
                 }
             }
-
         },
         Commands::Add { repos } => {
             if let Err(e) = add(repos.to_owned(), &tracking_file) {
