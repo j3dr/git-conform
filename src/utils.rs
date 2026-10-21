@@ -10,14 +10,8 @@ use std::process::{self, Command, Stdio};
 pub const APP_NAME: &str = env!("CARGO_PKG_NAME");
 pub const SPINNER_TICK: u64 = 60;
 
-/// Represents the file storing entries of tracked repositories
-pub struct TrackingFile {
-    pub path: String,
-    pub contents: String
-}
-
-/// Represents the file storing entries of ignored repositories by the 'scan' command
-pub struct IgnoredFile {
+/// Represents any file created and used by the application
+pub struct AppFile {
     pub path: String,
     pub contents: String
 }

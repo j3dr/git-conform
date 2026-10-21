@@ -3,7 +3,7 @@
 use crate::utils::{
     APP_NAME,
     SPINNER_TICK,
-    TrackingFile,
+    AppFile,
     repo_has_entry,
     path_is_repo
 };
@@ -22,7 +22,7 @@ use colored::Colorize;
 
 // Searches recursively in dirs for untracked git repositories and automatically adds them to the tracking file
 #[allow(clippy::redundant_closure_for_method_calls)]
-pub fn search_for_repos(dirs: &[String], tracking_file: &TrackingFile, scan_hidden: bool) -> Result<String, String> {
+pub fn search_for_repos(dirs: &[String], tracking_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
     let mut repos = String::new();
 
     // Open/create the tracking file for writing

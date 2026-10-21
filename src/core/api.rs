@@ -9,8 +9,7 @@ use crate::core::backend::{
 };
 use crate::utils::{
     APP_NAME,
-    TrackingFile,
-    IgnoredFile,
+    AppFile,
     repo_has_entry,
     repos_valid
 };
@@ -22,7 +21,7 @@ use std::path::Path;
 use colored::Colorize;
 
 /// Scans only specified directories
-pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &TrackingFile, scan_hidden: bool) -> Result<String, String> {
+pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
     // Remove duplicates
     dirs.sort_unstable();
     dirs.dedup();
@@ -75,7 +74,7 @@ pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &TrackingFile, scan_hidde
 }
 
 /// Scans all directories in user's /home
-pub fn scan_all(home_dir: String, tracking_file: &TrackingFile, scan_hidden: bool) -> Result<String, String> {
+pub fn scan_all(home_dir: String, tracking_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
     Ok(search_for_repos(&[home_dir], tracking_file, scan_hidden)?)
 }
 
@@ -91,7 +90,7 @@ pub fn list(track_file_contents: &str) -> Result<(), String> {
 }
 
 /// Writes the paths of the specified repos to the tracking file
-pub fn add(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Result<(), String> {
+pub fn add(mut repos: Vec<String>, tracking_file: &AppFile) -> Result<(), String> {
     // Remove duplicates
     repos.sort_unstable();
     repos.dedup();
@@ -123,7 +122,7 @@ pub fn add(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Result<(), S
 }
 
 /// Removes only specified repositories from the tracking file
-pub fn remove_repos(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Result<(), String> {
+pub fn remove_repos(mut repos: Vec<String>, tracking_file: &AppFile) -> Result<(), String> {
     if tracking_file.contents.is_empty() {
         return Err(String::from("No repository is being tracked"));
     }
@@ -176,7 +175,7 @@ pub fn remove_repos(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Res
 }
 
 /// Removes the tracking file
-pub fn remove_all(tracking_file: &TrackingFile) -> Result<(), String> {
+pub fn remove_all(tracking_file: &AppFile) -> Result<(), String> {
     if tracking_file.contents.is_empty() {
         return Err(String::from("No repository is being tracked"));
     }
@@ -187,7 +186,7 @@ pub fn remove_all(tracking_file: &TrackingFile) -> Result<(), String> {
 }
 
 /// Writes the paths of the specified repos to the ignored file
-pub fn ignore(mut repos: Vec<String>, ignored_file: &IgnoredFile) -> Result<(), String> {
+pub fn ignore(mut repos: Vec<String>, ignored_file: &AppFile) -> Result<(), String> {
     // Remove duplicates
     repos.sort_unstable();
     repos.dedup();
@@ -234,7 +233,7 @@ pub async fn check_repos(mut repos: Vec<String>, flags: &[bool]) -> Result<(), S
 
 /// Asynchronously retrieves important details about each repo
 /// in the tracking file and prints them to the standard output
-pub async fn check_all(tracking_file: &TrackingFile, flags: &[bool]) -> Result<(), String> {
+pub async fn check_all(tracking_file: &AppFile, flags: &[bool]) -> Result<(), String> {
     if tracking_file.contents.is_empty() {
         return Err(String::from("No repository is being tracked"));
     }
