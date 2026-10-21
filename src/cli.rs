@@ -56,7 +56,7 @@ pub enum Commands {
         #[arg(default_value_t = false)]
         all: bool
     },
-    /// Blacklists specified repositories from being added for tracking by the 'scan' command
+    /// Blacklist specified repositories from being added for tracking by the 'scan' command
     Ignore {
         #[arg(required = true)]
         repos: Vec<String>
