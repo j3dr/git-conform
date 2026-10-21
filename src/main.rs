@@ -127,10 +127,18 @@ async fn main() {
                 Err(e) => handle_error(&e, 2)
             }
         },
-        Commands::List => {
-            if let Err(e) = list(tracking_file.contents.as_str()) {
-                handle_error(&e, 3);
+        Commands::List { ignored } => {
+            if *ignored {
+                if let Err(e) = list(ignored_file.contents.as_str()) {
+                    handle_error(&e, 3);
+                }
             }
+            else {
+                if let Err(e) = list(tracking_file.contents.as_str()) {
+                    handle_error(&e, 3);
+                }
+            }
+
         },
         Commands::Add { repos } => {
             if let Err(e) = add(repos.to_owned(), &tracking_file) {

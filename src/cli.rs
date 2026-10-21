@@ -41,7 +41,12 @@ pub enum Commands {
         quiet: bool
     },
     /// Print the list of tracked repositories
-    List,
+    List {
+        /// Print the list of ignored repositories instead
+        #[arg(short, long)]
+        #[arg(default_value_t = false)]
+        ignored: bool
+    },
     /// Add specified repositories for tracking
     Add {
         #[arg(required = true)]
