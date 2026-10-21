@@ -1,7 +1,7 @@
 mod common;
 
 use git_conform::core::api::{check_repos, check_all};
-use git_conform::utils::TrackingFile;
+use git_conform::utils::AppFile;
 
 #[tokio::test]
 async fn case_check_repos_real() {
@@ -79,7 +79,7 @@ async fn case_check_all() {
 
 #[tokio::test]
 async fn case_check_all_empty_tracking_file() {
-    let tracking_file = TrackingFile {
+    let tracking_file = AppFile {
         path: String::new(),
         contents: String::new()
     };

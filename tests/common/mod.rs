@@ -1,19 +1,19 @@
-use git_conform::utils::{APP_NAME, TrackingFile, IgnoredFile};
+use git_conform::utils::{APP_NAME, AppFile};
 
 use std::fs::{self, File};
 use std::process::{Command, Stdio};
 
 #[allow(unused_assignments)]
-pub fn setup() -> Result<(String, TrackingFile, IgnoredFile, String), String> {
+pub fn setup() -> Result<(String, AppFile, AppFile, String), String> {
     // Obtain the path to user's home directory,
     // the tracking file and the ignored file
     
-    let mut tracking_file = TrackingFile {
+    let mut tracking_file = AppFile {
         path: String::new(),
         contents: String::new()
     };
 
-    let mut ignored_file = IgnoredFile {
+    let mut ignored_file = AppFile {
         path: String::new(),
         contents: String::new()
     };
