@@ -81,7 +81,7 @@ pub fn scan_all(home_dir: String, tracking_file: &AppFile, scan_hidden: bool) ->
 /// Prints the contents of the app file to the standard output
 pub fn list(app_file: &AppFile) -> Result<(), String> {
     if app_file.contents.is_empty() {
-        return Err(format!("The file '{}' is empty", app_file.path));
+        return Err(format!("The file '{}' is empty or doesn't exist yet", app_file.path));
     }
 
     print!("{}", app_file.contents.bold());
