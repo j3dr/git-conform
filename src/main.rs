@@ -129,12 +129,12 @@ async fn main() {
         },
         Commands::List { ignored } => {
             if *ignored {
-                if let Err(e) = list(ignored_file.contents.as_str()) {
+                if let Err(e) = list(&ignored_file) {
                     handle_error(&e, 3);
                 }
             }
             else {
-                if let Err(e) = list(tracking_file.contents.as_str()) {
+                if let Err(e) = list(&tracking_file) {
                     handle_error(&e, 3);
                 }
             }
