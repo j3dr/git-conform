@@ -64,7 +64,16 @@ pub enum Commands {
     /// Blacklist specified repositories from being added for tracking by the 'scan' command
     Ignore {
         #[arg(required = true)]
-        repos: Vec<String>
+        repos: Vec<String>,
+    },
+    /// Remove specified repositories from the blacklist
+    Notice {
+        #[arg(required = true)]
+        repos: Vec<String>,
+        /// Remove all repositories from the blacklist
+        #[arg(short, long, group = "repositories")]
+        #[arg(default_value_t = false)]
+        all: bool
     },
     /// Inspect specified repositories
     Check {

@@ -158,15 +158,24 @@ async fn main() {
                 handle_error(&e, 6);
             }
         },
-        // TODO: add sort of 'unignore' command
-        Commands::Check { repos, all, status, remotes } => {
+        Commands::Notice { repos, all } => {
             if *all {
-                if let Err(e) = check_all(&tracking_file, &[*status, *remotes]).await {
+                if let Err(e) = remove_app_file(&ignored_file) {
                     handle_error(&e, 7);
                 }
             }
-            else if let Err(e) = check_repos(repos.to_owned(), &[*status, *remotes]).await {
+            else if let Err(e) = remove_entries(repos.to_owned(), &ignored_file) {
                 handle_error(&e, 7);
+            }
+        },
+        Commands::Check { repos, all, status, remotes } => {
+            if *all {
+                if let Err(e) = check_all(&tracking_file, &[*status, *remotes]).await {
+                    handle_error(&e, 8);
+                }
+            }
+            else if let Err(e) = check_repos(repos.to_owned(), &[*status, *remotes]).await {
+                handle_error(&e, 8);
             }
         }
     };
