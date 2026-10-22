@@ -121,10 +121,10 @@ pub fn add_entries(mut repos: Vec<String>, app_file: &AppFile) -> Result<(), Str
     Ok(())
 }
 
-/// Removes only specified repositories from the tracking file
-pub fn remove_repos(mut repos: Vec<String>, tracking_file: &AppFile) -> Result<(), String> {
-    if tracking_file.contents.is_empty() {
-        return Err(String::from("No repository is being tracked"));
+/// Removes only specified repositories from the app file
+pub fn remove_entries(mut repos: Vec<String>, app_file: &AppFile) -> Result<(), String> {
+    if app_file.contents.is_empty() {
+        return Err(format!("The file '{}' is empty or doesn't exist yet", app_file.path));
     }
 
     // Remove duplicates
@@ -135,9 +135,9 @@ pub fn remove_repos(mut repos: Vec<String>, tracking_file: &AppFile) -> Result<(
 
     // Repositories validation
     for repo in &repos {
-        // Check if the tracking file contains the git repository
-        if !repo_has_entry(repo.as_str(), tracking_file.contents.as_str()) {
-            eprintln!("{APP_NAME}: '{repo}' is not being tracked");
+        // Check if the app file contains the git repository
+        if !repo_has_entry(repo.as_str(), app_file.contents.as_str()) {
+            eprintln!("{APP_NAME}: '{repo}' has no entry in the '{}' file", app_file.path);
             repos_ok = false;
         }
     }
@@ -146,30 +146,30 @@ pub fn remove_repos(mut repos: Vec<String>, tracking_file: &AppFile) -> Result<(
         return Err(String::from("Repositories validation failed"));
     }
 
-    let mut track_file_lines: Vec<&str> = tracking_file.contents.lines().collect();
+    let mut file_lines: Vec<&str> = app_file.contents.lines().collect();
 
-    // Open/create the tracking file for writing
-    let mut track_file = OpenOptions::new()
+    // Open/create the app file for writing
+    let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
-        .open(tracking_file.path.clone())
-        .map_err(|e| format!("{}: {e}", tracking_file.path))?;
+        .open(app_file.path.clone())
+        .map_err(|e| format!("{}: {e}", app_file.path))?;
 
     for repo in repos {
         // Remove specified repositories from the vector
-        if let Some(last) = track_file_lines.last() {
+        if let Some(last) = file_lines.last() {
             if repo.trim() == last.trim() {
-                track_file_lines.pop();
+                file_lines.pop();
             }
             else {
-                track_file_lines.retain(|&x| x.trim() != repo.trim());
+                file_lines.retain(|&x| x.trim() != repo.trim());
             }
         }
     }
 
-    // Write the final changes to the tracking file
-    track_file.write_all(track_file_lines.join("\n").as_bytes())
-        .map_err(|e| format!("{}: {e}", tracking_file.path))?;
+    // Write the final changes to the app file
+    file.write_all(file_lines.join("\n").as_bytes())
+        .map_err(|e| format!("{}: {e}", app_file.path))?;
 
     Ok(())
 }

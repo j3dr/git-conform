@@ -7,7 +7,7 @@ use crate::core::api::{
     scan_all,
     list,
     add_entries,
-    remove_repos,
+    remove_entries,
     remove_all,
     check_repos,
     check_all
@@ -149,7 +149,7 @@ async fn main() {
                     handle_error(&e, 5);
                 }
             }
-            else if let Err(e) = remove_repos(repos.to_owned(), &tracking_file) {
+            else if let Err(e) = remove_entries(repos.to_owned(), &tracking_file) {
                 handle_error(&e, 5);
             }
         },
