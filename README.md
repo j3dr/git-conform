@@ -30,6 +30,7 @@ bash <(curl -sSL https://raw.githubusercontent.com/j3dr/git-conform/main/setup.s
   - `-q, --quiet` - suppress information messages
 <br></br>
 - `git conform list` - prints the list of tracked repositories
+  - `-i, --ignored` - print the list of ignored repositories instead
 <br></br>
 - `git conform add` - adds specified repositories for tracking
 <br></br>
