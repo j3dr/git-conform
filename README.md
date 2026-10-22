@@ -39,7 +39,7 @@ bash <(curl -sSL https://raw.githubusercontent.com/j3dr/git-conform/main/setup.s
 - `git conform ignore` - blacklists specified repositories from being added for tracking by the `scan` command
 <br></br>
 - `git conform notice` - removes specified repositories from the blacklist
-  - `-a, --all` - removes all repositories from the blacklist
+  - `-a, --all` - remove all repositories from the blacklist
 <br></br>
 - `git conform check` - inspects specified repositories
   - `-a, --all` - inspect all tracked repositories
