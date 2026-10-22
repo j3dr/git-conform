@@ -2,6 +2,7 @@ use git_conform::utils::{APP_NAME, AppFile};
 
 use std::fs::{self, File};
 use std::process::{Command, Stdio};
+use std::env;
 
 #[allow(unused_assignments)]
 pub fn setup() -> Result<(String, AppFile, AppFile, String), String> {
@@ -21,7 +22,7 @@ pub fn setup() -> Result<(String, AppFile, AppFile, String), String> {
     let mut home_dir = String::new();
     let mut tests_dir = String::new();
 
-    if let Some(home_path) = home::home_dir() {
+    if let Some(home_path) = env::home_dir() {
         if let Some(home_path_str) = home_path.to_str() {
             home_dir = home_path_str.to_string();
 
