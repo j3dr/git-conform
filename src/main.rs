@@ -6,10 +6,9 @@ use crate::core::api::{
     scan_dirs,
     scan_all,
     list,
-    add,
+    add_entries,
     remove_repos,
     remove_all,
-    ignore,
     check_repos,
     check_all
 };
@@ -140,7 +139,7 @@ async fn main() {
             }
         },
         Commands::Add { repos } => {
-            if let Err(e) = add(repos.to_owned(), &tracking_file) {
+            if let Err(e) = add_entries(repos.to_owned(), &tracking_file) {
                 handle_error(&e, 4);
             }
         },
@@ -155,7 +154,7 @@ async fn main() {
             }
         },
         Commands::Ignore { repos } => {
-            if let Err(e) = ignore(repos.to_owned(), &ignored_file) {
+            if let Err(e) = add_entries(repos.to_owned(), &ignored_file) {
                 handle_error(&e, 6);
             }
         },

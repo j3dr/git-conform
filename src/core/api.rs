@@ -89,33 +89,33 @@ pub fn list(app_file: &AppFile) -> Result<(), String> {
     Ok(())
 }
 
-/// Writes the paths of the specified repos to the tracking file
-pub fn add(mut repos: Vec<String>, tracking_file: &AppFile) -> Result<(), String> {
+/// Writes the paths of the specified repos to the app file
+pub fn add_entries(mut repos: Vec<String>, app_file: &AppFile) -> Result<(), String> {
     // Remove duplicates
     repos.sort_unstable();
     repos.dedup();
 
     repos = repos_valid(repos.as_slice())?;
 
-    // Open/create the tracking file for writing
-    let mut track_file = OpenOptions::new()
+    // Open/create the app file for writing
+    let mut file = OpenOptions::new()
         .create(true)
         .append(true)
-        .open(tracking_file.path.clone())
-        .map_err(|e| format!("{}: {e}", tracking_file.path))?;
+        .open(app_file.path.clone())
+        .map_err(|e| format!("{}: {e}", app_file.path))?;
 
     for repo in repos {
-        // Check if the tracking file already
+        // Check if the app file already
         // contains the git repository path
-        if repo_has_entry(repo.as_str(), tracking_file.contents.as_str()) {
-            println!("{APP_NAME}: '{repo}' is already being tracked");
+        if repo_has_entry(repo.as_str(), app_file.contents.as_str()) {
+            println!("{APP_NAME}: '{repo}' already has an entry in the '{}' file", app_file.path);
             continue;
         }
 
-        // Add the path of the git repository to the tracking file
-        track_file.write_all(
+        // Add the path of the git repository to the app file
+        file.write_all(
             format!("{repo}\n").as_bytes())
-            .map_err(|e| format!("{}: {e}", tracking_file.path))?;
+            .map_err(|e| format!("{}: {e}", app_file.path))?;
     }
 
     Ok(())
@@ -181,38 +181,6 @@ pub fn remove_all(tracking_file: &AppFile) -> Result<(), String> {
     }
 
     fs::remove_file(tracking_file.path.clone()).map_err(|e| format!("{}: {e}", tracking_file.path))?;
-
-    Ok(())
-}
-
-/// Writes the paths of the specified repos to the ignored file
-pub fn ignore(mut repos: Vec<String>, ignored_file: &AppFile) -> Result<(), String> {
-    // Remove duplicates
-    repos.sort_unstable();
-    repos.dedup();
-
-    repos = repos_valid(repos.as_slice())?;
-
-    // Open/create the ignored file for writing
-    let mut ign_file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(ignored_file.path.clone())
-        .map_err(|e| format!("{}: {e}", ignored_file.path))?;
-
-    for repo in repos {
-        // Check if the ignored file already
-        // contains the git repository path
-        if repo_has_entry(repo.as_str(), ignored_file.contents.as_str()) {
-            println!("{APP_NAME}: '{repo}' is already blacklisted");
-            continue;
-        }
-
-        // Add the path of the git repository to the ignored file
-        ign_file.write_all(
-            format!("{repo}\n").as_bytes())
-            .map_err(|e| format!("{}: {e}", ignored_file.path))?;
-    }
 
     Ok(())
 }
