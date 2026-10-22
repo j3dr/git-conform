@@ -23,6 +23,7 @@ use crate::cli::{Cli, Commands};
 use std::fs::{self, File};
 use std::io::Write as _;
 use std::fmt::Write as _;
+use std::env;
 
 use clap::Parser;
 use colored::Colorize;
@@ -44,7 +45,7 @@ async fn main() {
 
     let mut home_dir = String::new();
 
-    if let Some(home_path) = home::home_dir() {
+    if let Some(home_path) = env::home_dir() {
         if let Some(home_path_str) = home_path.to_str() {
             home_dir = home_path_str.to_string();
 
