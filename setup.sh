@@ -7,8 +7,8 @@ NC='\033[0m'
 
 # Global constants
 REPO_URL="https://github.com/j3dr/git-conform"
-BIN_PATH="/usr/bin/git-conform"
-LOCAL_SHARE_PATH="$HOME/.local/share/git-conform"
+BIN_PATH="/usr/bin/gitcf"
+LOCAL_SHARE_PATH="$HOME/.local/share/gitcf"
 
 # Print messages with color
 printcl() {
@@ -22,18 +22,18 @@ install_git_conform() {
     printcl "${YELLOW}" "Installing The CLI into ${BIN_PATH}..."
 
     # Download the binary
-    if ! sudo wget -q --show-progress -O "${BIN_PATH}" "${REPO_URL}/releases/latest/download/git-conform"; then
+    if ! sudo wget -q --show-progress -O "${BIN_PATH}" "${REPO_URL}/releases/latest/download/gitcf"; then
         printcl "${YELLOW}" "Error: Failed to download the binary."
         return 1
     fi
 
     # Make the binary executable
     if ! sudo chmod +x "${BIN_PATH}"; then
-        printcl "${YELLOW}" "Error: Failed to make git-conform executable."
+        printcl "${YELLOW}" "Error: Failed to make gitcf executable."
         return 1
     fi
 
-    printcl "${GREEN}" "Installed Successfully! Run the CLI with the command: git-conform --help"
+    printcl "${GREEN}" "Installed Successfully! Run the CLI with the command: gitcf --help"
 }
 
 # Uninstall the git-conform CLI
