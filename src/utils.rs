@@ -7,7 +7,7 @@ use std::fs;
 use std::path::Path;
 use std::process::{self, Command, Stdio};
 
-pub const APP_NAME: &str = env!("CARGO_PKG_NAME");
+pub const APP_NAME: &str = env!("CARGO_CRATE_NAME");
 pub const SPINNER_TICK: u64 = 60;
 
 /// Represents any file created and used by the application

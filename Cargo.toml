@@ -9,6 +9,10 @@ readme = "README.md"
 keywords = ["git", "tracker", "cli"]
 categories = ["command-line-utilities", "development-tools", "visualization"]
 
+[[bin]]
+name = "gitcf"
+path = "src/main.rs"
+
 [dependencies]
 tokio = { version = "1.52.3", features = ["full"] }
 clap = { version = "4.6.1", features = ["derive"] }
