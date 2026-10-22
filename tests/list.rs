@@ -1,7 +1,6 @@
 mod common;
 
 use git_conform::core::api::list;
-use git_conform::utils::AppFile;
 
 use serial_test::serial;
 
