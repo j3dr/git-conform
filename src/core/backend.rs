@@ -3,8 +3,8 @@
 use crate::utils::{
     APP_NAME,
     SPINNER_TICK,
-    TrackingFile,
-    repo_is_tracked,
+    AppFile,
+    repo_has_entry,
     path_is_repo
 };
 
@@ -22,7 +22,7 @@ use colored::Colorize;
 
 // Searches recursively in dirs for untracked git repositories and automatically adds them to the tracking file
 #[allow(clippy::redundant_closure_for_method_calls)]
-pub fn search_for_repos(dirs: &[String], tracking_file: &TrackingFile, scan_hidden: bool) -> Result<String, String> {
+pub fn search_for_repos(dirs: &[String], tracking_file: &AppFile, ignored_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
     let mut repos = String::new();
 
     // Open/create the tracking file for writing
@@ -39,7 +39,7 @@ pub fn search_for_repos(dirs: &[String], tracking_file: &TrackingFile, scan_hidd
                 .same_file_system(true)
                 .into_iter()
                 .filter_map(|n| n.ok()) {
-                    match search_core(&entry, &track_file, tracking_file.path.as_str(), tracking_file.contents.as_str()) {
+                    match search_core(&entry, &track_file, &tracking_file, &ignored_file) {
                         Ok(s) => repos.push_str(&s),
                         Err(e) => return Err(e)
                     }
@@ -54,7 +54,7 @@ pub fn search_for_repos(dirs: &[String], tracking_file: &TrackingFile, scan_hidd
                 .into_iter()
                 .filter_entry(|n| !entry_is_hidden(n))
                 .filter_map(|n| n.ok()) {
-                    match search_core(&entry, &track_file, tracking_file.path.as_str(), tracking_file.contents.as_str()) {
+                    match search_core(&entry, &track_file, &tracking_file, &ignored_file) {
                         Ok(s) => repos.push_str(&s),
                         Err(e) => return Err(e)
                     }
@@ -66,7 +66,7 @@ pub fn search_for_repos(dirs: &[String], tracking_file: &TrackingFile, scan_hidd
 }
 
 // Core functionality of the `search_for_repos` function
-fn search_core(entry: &DirEntry, mut track_file: &File, track_file_path: &str, track_file_contents: &str) -> Result<String, String> {
+fn search_core(entry: &DirEntry, mut track_file: &File, tracking_file: &AppFile, ignored_file: &AppFile) -> Result<String, String> {
     let mut repo = String::new();
 
     // Check if the path contains .git directory
@@ -74,7 +74,13 @@ fn search_core(entry: &DirEntry, mut track_file: &File, track_file_path: &str, t
         if let Some(repo_path) = path.strip_suffix("/.git") {
             // Check if the tracking file already
             // contains the git repository path
-            if repo_is_tracked(repo_path, track_file_contents) {
+            if repo_has_entry(repo_path, tracking_file.contents.as_str()) {
+                return Ok(repo)
+            }
+
+            // Check if the git repository path
+            // exists in the ignored file
+            if repo_has_entry(repo_path, ignored_file.contents.as_str()) {
                 return Ok(repo)
             }
 
@@ -85,7 +91,7 @@ fn search_core(entry: &DirEntry, mut track_file: &File, track_file_path: &str, t
                         // Add the path of the git repository to the tracking file
                         track_file.write_all(
                             format!("{repo_path}\n").as_bytes())
-                            .map_err(|e| format!("{track_file_path}: {e}"))?;
+                            .map_err(|e| format!("{}: {e}", tracking_file.path))?;
                         
                         repo = format!("{repo_path}\n");
                     }

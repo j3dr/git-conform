@@ -10,20 +10,20 @@ use std::process::{self, Command, Stdio};
 pub const APP_NAME: &str = env!("CARGO_PKG_NAME");
 pub const SPINNER_TICK: u64 = 60;
 
-/// Represents the file storing entries of tracked repositories
-pub struct TrackingFile {
+/// Represents any file created and used by the application
+pub struct AppFile {
     pub path: String,
     pub contents: String
 }
 
-/// Checks if a given repository has an entry in the tracking file
+/// Checks if a given repository has an entry in the specified file contents
 #[allow(clippy::must_use_candidate)]
-pub fn repo_is_tracked(repo: &str, track_file_contents: &str) -> bool {
-    let track_file_lines: Vec<&str> = track_file_contents
+pub fn repo_has_entry(repo: &str, file_contents: &str) -> bool {
+    let file_lines: Vec<&str> = file_contents
         .lines()
         .collect();
 
-    track_file_lines.contains(&repo)
+    file_lines.contains(&repo)
 }
 
 /// Checks if a given path is a git repository

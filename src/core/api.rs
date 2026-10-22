@@ -9,8 +9,8 @@ use crate::core::backend::{
 };
 use crate::utils::{
     APP_NAME,
-    TrackingFile,
-    repo_is_tracked,
+    AppFile,
+    repo_has_entry,
     repos_valid
 };
 
@@ -21,7 +21,7 @@ use std::path::Path;
 use colored::Colorize;
 
 /// Scans only specified directories
-pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &TrackingFile, scan_hidden: bool) -> Result<String, String> {
+pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &AppFile, ignored_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
     // Remove duplicates
     dirs.sort_unstable();
     dirs.dedup();
@@ -70,61 +70,61 @@ pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &TrackingFile, scan_hidde
         return Err(String::from("Directories validation failed"));
     }
 
-    Ok(search_for_repos(dirs.as_slice(), tracking_file, scan_hidden)?)
+    Ok(search_for_repos(dirs.as_slice(), tracking_file, ignored_file, scan_hidden)?)
 }
 
 /// Scans all directories in user's /home
-pub fn scan_all(home_dir: String, tracking_file: &TrackingFile, scan_hidden: bool) -> Result<String, String> {
-    Ok(search_for_repos(&[home_dir], tracking_file, scan_hidden)?)
+pub fn scan_all(home_dir: String, tracking_file: &AppFile, ignored_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
+    Ok(search_for_repos(&[home_dir], tracking_file, ignored_file, scan_hidden)?)
 }
 
-/// Prints the paths of all tracked git repositories to the standard output
-pub fn list(track_file_contents: &str) -> Result<(), String> {
-    if track_file_contents.is_empty() {
-        return Err(String::from("No repository is being tracked"));
+/// Prints the contents of the app file to the standard output
+pub fn list(app_file: &AppFile) -> Result<(), String> {
+    if app_file.contents.is_empty() {
+        return Err(format!("The file '{}' is empty or doesn't exist yet", app_file.path));
     }
 
-    print!("{}", track_file_contents.bold());
+    print!("{}", app_file.contents.bold());
 
     Ok(())
 }
 
-/// Writes the paths of the specified repos to the tracking file
-pub fn add(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Result<(), String> {
+/// Writes the paths of the specified repos to the app file
+pub fn add_entries(mut repos: Vec<String>, app_file: &AppFile) -> Result<(), String> {
     // Remove duplicates
     repos.sort_unstable();
     repos.dedup();
 
     repos = repos_valid(repos.as_slice())?;
 
-    // Open/create the tracking file for writing
-    let mut track_file = OpenOptions::new()
+    // Open/create the app file for writing
+    let mut file = OpenOptions::new()
         .create(true)
         .append(true)
-        .open(tracking_file.path.clone())
-        .map_err(|e| format!("{}: {e}", tracking_file.path))?;
+        .open(app_file.path.clone())
+        .map_err(|e| format!("{}: {e}", app_file.path))?;
 
     for repo in repos {
-        // Check if the tracking file already
+        // Check if the app file already
         // contains the git repository path
-        if repo_is_tracked(repo.as_str(), tracking_file.contents.as_str()) {
-            println!("{APP_NAME}: '{repo}' is already being tracked");
+        if repo_has_entry(repo.as_str(), app_file.contents.as_str()) {
+            println!("{APP_NAME}: '{repo}' already has an entry in the '{}' file", app_file.path);
             continue;
         }
 
-        // Add the path of the git repository to the tracking file
-        track_file.write_all(
+        // Add the path of the git repository to the app file
+        file.write_all(
             format!("{repo}\n").as_bytes())
-            .map_err(|e| format!("{}: {e}", tracking_file.path))?;
+            .map_err(|e| format!("{}: {e}", app_file.path))?;
     }
 
     Ok(())
 }
 
-/// Removes only specified repositories from the tracking file
-pub fn remove_repos(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Result<(), String> {
-    if tracking_file.contents.is_empty() {
-        return Err(String::from("No repository is being tracked"));
+/// Removes only specified repositories from the app file
+pub fn remove_entries(mut repos: Vec<String>, app_file: &AppFile) -> Result<(), String> {
+    if app_file.contents.is_empty() {
+        return Err(format!("The file '{}' is empty or doesn't exist yet", app_file.path));
     }
 
     // Remove duplicates
@@ -135,9 +135,9 @@ pub fn remove_repos(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Res
 
     // Repositories validation
     for repo in &repos {
-        // Check if the tracking file contains the git repository
-        if !repo_is_tracked(repo.as_str(), tracking_file.contents.as_str()) {
-            eprintln!("{APP_NAME}: '{repo}' is not being tracked");
+        // Check if the app file contains the git repository
+        if !repo_has_entry(repo.as_str(), app_file.contents.as_str()) {
+            eprintln!("{APP_NAME}: '{repo}' has no entry in the '{}' file", app_file.path);
             repos_ok = false;
         }
     }
@@ -146,41 +146,41 @@ pub fn remove_repos(mut repos: Vec<String>, tracking_file: &TrackingFile) -> Res
         return Err(String::from("Repositories validation failed"));
     }
 
-    let mut track_file_lines: Vec<&str> = tracking_file.contents.lines().collect();
+    let mut file_lines: Vec<&str> = app_file.contents.lines().collect();
 
-    // Open/create the tracking file for writing
-    let mut track_file = OpenOptions::new()
+    // Open/create the app file for writing
+    let mut file = OpenOptions::new()
         .write(true)
         .truncate(true)
-        .open(tracking_file.path.clone())
-        .map_err(|e| format!("{}: {e}", tracking_file.path))?;
+        .open(app_file.path.clone())
+        .map_err(|e| format!("{}: {e}", app_file.path))?;
 
     for repo in repos {
         // Remove specified repositories from the vector
-        if let Some(last) = track_file_lines.last() {
+        if let Some(last) = file_lines.last() {
             if repo.trim() == last.trim() {
-                track_file_lines.pop();
+                file_lines.pop();
             }
             else {
-                track_file_lines.retain(|&x| x.trim() != repo.trim());
+                file_lines.retain(|&x| x.trim() != repo.trim());
             }
         }
     }
 
-    // Write the final changes to the tracking file
-    track_file.write_all(track_file_lines.join("\n").as_bytes())
-        .map_err(|e| format!("{}: {e}", tracking_file.path))?;
+    // Write the final changes to the app file
+    file.write_all(file_lines.join("\n").as_bytes())
+        .map_err(|e| format!("{}: {e}", app_file.path))?;
 
     Ok(())
 }
 
-/// Removes the tracking file
-pub fn remove_all(tracking_file: &TrackingFile) -> Result<(), String> {
-    if tracking_file.contents.is_empty() {
-        return Err(String::from("No repository is being tracked"));
+/// Removes the app file entirely
+pub fn remove_app_file(app_file: &AppFile) -> Result<(), String> {
+    if app_file.contents.is_empty() {
+        return Err(format!("The file '{}' is empty or doesn't exist yet", app_file.path));
     }
 
-    fs::remove_file(tracking_file.path.clone()).map_err(|e| format!("{}: {e}", tracking_file.path))?;
+    fs::remove_file(app_file.path.clone()).map_err(|e| format!("{}: {e}", app_file.path))?;
 
     Ok(())
 }
@@ -201,7 +201,7 @@ pub async fn check_repos(mut repos: Vec<String>, flags: &[bool]) -> Result<(), S
 
 /// Asynchronously retrieves important details about each repo
 /// in the tracking file and prints them to the standard output
-pub async fn check_all(tracking_file: &TrackingFile, flags: &[bool]) -> Result<(), String> {
+pub async fn check_all(tracking_file: &AppFile, flags: &[bool]) -> Result<(), String> {
     if tracking_file.contents.is_empty() {
         return Err(String::from("No repository is being tracked"));
     }
