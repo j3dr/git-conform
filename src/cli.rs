@@ -68,7 +68,7 @@ pub enum Commands {
     },
     /// Remove specified repositories from the blacklist
     Notice {
-        #[arg(required = true)]
+        #[arg(required = true, group = "repositories")]
         repos: Vec<String>,
         /// Remove all repositories from the blacklist
         #[arg(short, long, group = "repositories")]
