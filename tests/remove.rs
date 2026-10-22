@@ -1,6 +1,6 @@
 mod common;
 
-use git_conform::core::api::{remove_entries, remove_all};
+use git_conform::core::api::{remove_entries, remove_app_file};
 
 use std::fs::{self, File};
 use std::io::Write as _;
@@ -84,7 +84,7 @@ fn case_remove_entries_empty_tracking_file() {
 
 #[test]
 #[serial]
-fn case_remove_all() {
+fn case_remove_app_file() {
     let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
@@ -94,16 +94,16 @@ fn case_remove_all() {
         .unwrap();
 
     // The function executes without errors
-    assert_eq!(remove_all(&tracking_file), Ok(()));
+    assert_eq!(remove_app_file(&tracking_file), Ok(()));
 
     // The tracking file doesn't exist
     assert!(!Path::new(tracking_file.path.as_str()).try_exists().unwrap());
 }
 
 #[test]
-fn case_remove_all_empty_tracking_file() {
+fn case_remove_app_file_empty_tracking_file() {
     let (_home_dir, tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function executes without errors
-    assert_eq!(remove_all(&tracking_file), Err(String::from("No repository is being tracked")));
+    assert_eq!(remove_app_file(&tracking_file), Err(format!("The file '{}' is empty or doesn't exist yet", tracking_file.path)));
 }
