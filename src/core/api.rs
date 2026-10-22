@@ -21,7 +21,7 @@ use std::path::Path;
 use colored::Colorize;
 
 /// Scans only specified directories
-pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
+pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &AppFile, ignored_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
     // Remove duplicates
     dirs.sort_unstable();
     dirs.dedup();
@@ -70,12 +70,12 @@ pub fn scan_dirs(mut dirs: Vec<String>, tracking_file: &AppFile, scan_hidden: bo
         return Err(String::from("Directories validation failed"));
     }
 
-    Ok(search_for_repos(dirs.as_slice(), tracking_file, scan_hidden)?)
+    Ok(search_for_repos(dirs.as_slice(), tracking_file, ignored_file, scan_hidden)?)
 }
 
 /// Scans all directories in user's /home
-pub fn scan_all(home_dir: String, tracking_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
-    Ok(search_for_repos(&[home_dir], tracking_file, scan_hidden)?)
+pub fn scan_all(home_dir: String, tracking_file: &AppFile, ignored_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
+    Ok(search_for_repos(&[home_dir], tracking_file, ignored_file, scan_hidden)?)
 }
 
 /// Prints the contents of the app file to the standard output

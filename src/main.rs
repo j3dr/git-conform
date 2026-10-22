@@ -105,10 +105,10 @@ async fn main() {
             let result: Result<String, String>;
 
             if *all {
-                result = scan_all(home_dir, &tracking_file, *hidden);
+                result = scan_all(home_dir, &tracking_file, &ignored_file, *hidden);
             }
             else {
-                result = scan_dirs(dirs.to_owned(), &tracking_file, *hidden);
+                result = scan_dirs(dirs.to_owned(), &tracking_file, &ignored_file, *hidden);
             }
 
             match result {

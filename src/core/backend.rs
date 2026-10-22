@@ -22,7 +22,7 @@ use colored::Colorize;
 
 // Searches recursively in dirs for untracked git repositories and automatically adds them to the tracking file
 #[allow(clippy::redundant_closure_for_method_calls)]
-pub fn search_for_repos(dirs: &[String], tracking_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
+pub fn search_for_repos(dirs: &[String], tracking_file: &AppFile, ignored_file: &AppFile, scan_hidden: bool) -> Result<String, String> {
     let mut repos = String::new();
 
     // Open/create the tracking file for writing
@@ -39,7 +39,7 @@ pub fn search_for_repos(dirs: &[String], tracking_file: &AppFile, scan_hidden: b
                 .same_file_system(true)
                 .into_iter()
                 .filter_map(|n| n.ok()) {
-                    match search_core(&entry, &track_file, &tracking_file) {
+                    match search_core(&entry, &track_file, &tracking_file, &ignored_file) {
                         Ok(s) => repos.push_str(&s),
                         Err(e) => return Err(e)
                     }
@@ -54,7 +54,7 @@ pub fn search_for_repos(dirs: &[String], tracking_file: &AppFile, scan_hidden: b
                 .into_iter()
                 .filter_entry(|n| !entry_is_hidden(n))
                 .filter_map(|n| n.ok()) {
-                    match search_core(&entry, &track_file, &tracking_file) {
+                    match search_core(&entry, &track_file, &tracking_file, &ignored_file) {
                         Ok(s) => repos.push_str(&s),
                         Err(e) => return Err(e)
                     }
@@ -66,7 +66,7 @@ pub fn search_for_repos(dirs: &[String], tracking_file: &AppFile, scan_hidden: b
 }
 
 // Core functionality of the `search_for_repos` function
-fn search_core(entry: &DirEntry, mut track_file: &File, tracking_file: &AppFile) -> Result<String, String> {
+fn search_core(entry: &DirEntry, mut track_file: &File, tracking_file: &AppFile, ignored_file: &AppFile) -> Result<String, String> {
     let mut repo = String::new();
 
     // Check if the path contains .git directory
@@ -75,6 +75,12 @@ fn search_core(entry: &DirEntry, mut track_file: &File, tracking_file: &AppFile)
             // Check if the tracking file already
             // contains the git repository path
             if repo_has_entry(repo_path, tracking_file.contents.as_str()) {
+                return Ok(repo)
+            }
+
+            // Check if the git repository path
+            // exists in the ignored file
+            if repo_has_entry(repo_path, ignored_file.contents.as_str()) {
                 return Ok(repo)
             }
 
