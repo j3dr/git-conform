@@ -41,7 +41,12 @@ pub enum Commands {
         quiet: bool
     },
     /// Print the list of tracked repositories
-    List,
+    List {
+        /// Print the list of ignored repositories instead
+        #[arg(short, long)]
+        #[arg(default_value_t = false)]
+        ignored: bool
+    },
     /// Add specified repositories for tracking
     Add {
         #[arg(required = true)]
@@ -52,6 +57,20 @@ pub enum Commands {
         #[arg(required = true, group = "repositories")]
         repos: Vec<String>,
         /// Remove all repositories from tracking
+        #[arg(short, long, group = "repositories")]
+        #[arg(default_value_t = false)]
+        all: bool
+    },
+    /// Blacklist specified repositories from being added for tracking by the `scan` command
+    Ignore {
+        #[arg(required = true)]
+        repos: Vec<String>,
+    },
+    /// Remove specified repositories from the blacklist
+    Notice {
+        #[arg(required = true, group = "repositories")]
+        repos: Vec<String>,
+        /// Remove all repositories from the blacklist
         #[arg(short, long, group = "repositories")]
         #[arg(default_value_t = false)]
         all: bool

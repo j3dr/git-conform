@@ -6,15 +6,15 @@ use crate::core::api::{
     scan_dirs,
     scan_all,
     list,
-    add,
-    remove_repos,
-    remove_all,
+    add_entries,
+    remove_entries,
+    remove_app_file,
     check_repos,
     check_all
 };
 use crate::utils::{
     APP_NAME,
-    TrackingFile,
+    AppFile,
     handle_error,
     path_is_repo
 };
@@ -23,6 +23,7 @@ use crate::cli::{Cli, Commands};
 use std::fs::{self, File};
 use std::io::Write as _;
 use std::fmt::Write as _;
+use std::env;
 
 use clap::Parser;
 use colored::Colorize;
@@ -30,21 +31,27 @@ use colored::Colorize;
 #[tokio::main]
 async fn main() {
     // Obtain the path to user's home directory,
-    // the tracking file and it's contents
+    // the tracking file, the ignored file and their contents
 
-    let mut tracking_file = TrackingFile {
+    let mut tracking_file = AppFile {
+        path: String::new(),
+        contents: String::new()
+    };
+
+    let mut ignored_file = AppFile {
         path: String::new(),
         contents: String::new()
     };
 
     let mut home_dir = String::new();
 
-    if let Some(home_path) = home::home_dir() {
+    if let Some(home_path) = env::home_dir() {
         if let Some(home_path_str) = home_path.to_str() {
             home_dir = home_path_str.to_string();
 
             let app_data_dir = format!("{home_dir}/.local/share/{APP_NAME}");
             tracking_file.path = format!("{app_data_dir}/tracked");
+            ignored_file.path = format!("{app_data_dir}/ignored");
 
             // Create the application data directory if one doesn't already exist
             match fs::create_dir_all(&app_data_dir) {
@@ -52,9 +59,9 @@ async fn main() {
                 Err(e) => handle_error(format!("{app_data_dir}: {e}").as_str(), 1)
             };
 
+            // Update the tracking file, push only the paths
+            // that are still git repositories
             if let Ok(str) = fs::read_to_string(&tracking_file.path) {
-                // Update the tracking file, push only the paths
-                // that are still git repositories
                 for line in str.lines() {
                     match path_is_repo(line) {
                         Ok(is_repo) => {
@@ -79,6 +86,11 @@ async fn main() {
                     Err(e) => handle_error(format!("{}: {e}", tracking_file.path).as_str(), 1)
                 };
             }
+
+            // Read the ignored file contents if it exists
+            if let Ok(str) = fs::read_to_string(&ignored_file.path) {
+                ignored_file.contents = str;
+            }
         }
         else {
             handle_error("Could not obtain the home directory path: the path contains invalid UTF-8 characters", 1);
@@ -94,10 +106,10 @@ async fn main() {
             let result: Result<String, String>;
 
             if *all {
-                result = scan_all(home_dir, &tracking_file, *hidden);
+                result = scan_all(home_dir, &tracking_file, &ignored_file, *hidden);
             }
             else {
-                result = scan_dirs(dirs.to_owned(), &tracking_file, *hidden);
+                result = scan_dirs(dirs.to_owned(), &tracking_file, &ignored_file, *hidden);
             }
 
             match result {
@@ -115,34 +127,56 @@ async fn main() {
                 Err(e) => handle_error(&e, 2)
             }
         },
-        Commands::List => {
-            if let Err(e) = list(tracking_file.contents.as_str()) {
-                handle_error(&e, 3);
+        Commands::List { ignored } => {
+            if *ignored {
+                if let Err(e) = list(&ignored_file) {
+                    handle_error(&e, 3);
+                }
+            }
+            else {
+                if let Err(e) = list(&tracking_file) {
+                    handle_error(&e, 3);
+                }
             }
         },
         Commands::Add { repos } => {
-            if let Err(e) = add(repos.to_owned(), &tracking_file) {
+            if let Err(e) = add_entries(repos.to_owned(), &tracking_file) {
                 handle_error(&e, 4);
             }
         },
         Commands::Rm { repos, all } => {
             if *all {
-                if let Err(e) = remove_all(&tracking_file) {
+                if let Err(e) = remove_app_file(&tracking_file) {
                     handle_error(&e, 5);
                 }
             }
-            else if let Err(e) = remove_repos(repos.to_owned(), &tracking_file) {
+            else if let Err(e) = remove_entries(repos.to_owned(), &tracking_file) {
                 handle_error(&e, 5);
+            }
+        },
+        Commands::Ignore { repos } => {
+            if let Err(e) = add_entries(repos.to_owned(), &ignored_file) {
+                handle_error(&e, 6);
+            }
+        },
+        Commands::Notice { repos, all } => {
+            if *all {
+                if let Err(e) = remove_app_file(&ignored_file) {
+                    handle_error(&e, 7);
+                }
+            }
+            else if let Err(e) = remove_entries(repos.to_owned(), &ignored_file) {
+                handle_error(&e, 7);
             }
         },
         Commands::Check { repos, all, status, remotes } => {
             if *all {
                 if let Err(e) = check_all(&tracking_file, &[*status, *remotes]).await {
-                    handle_error(&e, 6);
+                    handle_error(&e, 8);
                 }
             }
             else if let Err(e) = check_repos(repos.to_owned(), &[*status, *remotes]).await {
-                handle_error(&e, 6);
+                handle_error(&e, 8);
             }
         }
     };

@@ -1,6 +1,6 @@
 [package]
 name = "git-conform"
-version = "0.2.4"
+version = "1.0.0"
 edition = "2024"
 description = "Keep track of your local git repositories"
 repository = "https://github.com/j3dr/git-conform"
@@ -9,17 +9,20 @@ readme = "README.md"
 keywords = ["git", "tracker", "cli"]
 categories = ["command-line-utilities", "development-tools", "visualization"]
 
+[[bin]]
+name = "gitcf"
+path = "src/main.rs"
+
 [dependencies]
-tokio = { version = "1.52.3", features = ["full"] }
-clap = { version = "4.6.1", features = ["derive"] }
-indicatif = "0.18.4"
+tokio = { version = "1.54.1", features = ["full"] }
+clap = { version = "4.6.7", features = ["derive"] }
+indicatif = "0.18.6"
 walkdir = "2"
-home = "0.5.12"
 wait-timeout = "0.2.1"
 colored = "3"
 
 [dev-dependencies]
-serial_test = "3.4.0"
+serial_test = "4.0.1"
 
 [lints.clippy]
 suspicious = "warn"

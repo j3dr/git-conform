@@ -1,6 +1,6 @@
 mod common;
 
-use git_conform::core::api::{remove_repos, remove_all};
+use git_conform::core::api::{remove_entries, remove_app_file};
 
 use std::fs::{self, File};
 use std::io::Write as _;
@@ -10,8 +10,8 @@ use serial_test::serial;
 
 #[test]
 #[serial]
-fn case_remove_repos_all() {
-    let (_home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+fn case_remove_entries_all() {
+    let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
 
@@ -25,7 +25,7 @@ fn case_remove_repos_all() {
         .unwrap();
 
     // The function executes without errors
-    assert_eq!(remove_repos(repos, &tracking_file), Ok(()));
+    assert_eq!(remove_entries(repos, &tracking_file), Ok(()));
 
     // Read the updated tracking file
     let track_file_up = fs::read_to_string(tracking_file.path).unwrap();
@@ -36,8 +36,8 @@ fn case_remove_repos_all() {
 
 #[test]
 #[serial]
-fn case_remove_repos_only_one() {
-    let (_home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+fn case_remove_entries_only_one() {
+    let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
 
@@ -48,7 +48,7 @@ fn case_remove_repos_only_one() {
         .unwrap();
 
     // The function executes without errors
-    assert_eq!(remove_repos(vec![repos[1].to_string()], &tracking_file), Ok(()));
+    assert_eq!(remove_entries(vec![repos[1].to_string()], &tracking_file), Ok(()));
 
     // Read the updated tracking file
     let track_file_up = fs::read_to_string(tracking_file.path).unwrap();
@@ -59,8 +59,8 @@ fn case_remove_repos_only_one() {
 
 #[test]
 #[serial]
-fn case_remove_repos_non_existent() {
-    let (_home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+fn case_remove_entries_non_existent() {
+    let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
 
@@ -71,21 +71,21 @@ fn case_remove_repos_non_existent() {
     }
 
     // The function throws an error
-    assert_eq!(remove_repos(repos, &tracking_file), Err(String::from("Repositories validation failed")));
+    assert_eq!(remove_entries(repos, &tracking_file), Err(String::from("Repositories validation failed")));
 }
 
 #[test]
-fn case_remove_repos_empty_tracking_file() {
-    let (_home_dir, tracking_file, _tests_dir) = common::setup().unwrap();
+fn case_remove_entries_empty_tracking_file() {
+    let (_home_dir, tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function executes without errors
-    assert_eq!(remove_repos(vec!["repo2".to_string()], &tracking_file), Err(String::from("No repository is being tracked")));
+    assert_eq!(remove_entries(vec!["repo2".to_string()], &tracking_file), Err(format!("The file '{}' is empty or doesn't exist yet", tracking_file.path)));
 }
 
 #[test]
 #[serial]
-fn case_remove_all() {
-    let (_home_dir, mut tracking_file, _tests_dir) = common::setup().unwrap();
+fn case_remove_app_file() {
+    let (_home_dir, mut tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     tracking_file.contents = "repo1\nrepo2\nrepo3".to_string();
 
@@ -94,16 +94,16 @@ fn case_remove_all() {
         .unwrap();
 
     // The function executes without errors
-    assert_eq!(remove_all(&tracking_file), Ok(()));
+    assert_eq!(remove_app_file(&tracking_file), Ok(()));
 
     // The tracking file doesn't exist
     assert!(!Path::new(tracking_file.path.as_str()).try_exists().unwrap());
 }
 
 #[test]
-fn case_remove_all_empty_tracking_file() {
-    let (_home_dir, tracking_file, _tests_dir) = common::setup().unwrap();
+fn case_remove_app_file_empty_tracking_file() {
+    let (_home_dir, tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function executes without errors
-    assert_eq!(remove_all(&tracking_file), Err(String::from("No repository is being tracked")));
+    assert_eq!(remove_app_file(&tracking_file), Err(format!("The file '{}' is empty or doesn't exist yet", tracking_file.path)));
 }
