@@ -9,7 +9,7 @@ use serial_test::serial;
 
 #[test]
 #[serial]
-fn case_add_real() {
+fn case_add_entries_real() {
     let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // Remove the tracking file if it already exists
@@ -40,7 +40,7 @@ fn case_add_real() {
 }
 
 #[test]
-fn case_add_fake() {
+fn case_add_entries_fake() {
     let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
@@ -53,7 +53,7 @@ fn case_add_fake() {
 }
 
 #[test]
-fn case_add_regular_dirs() {
+fn case_add_entries_regular_dirs() {
     let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
@@ -66,7 +66,7 @@ fn case_add_regular_dirs() {
 }
 
 #[test]
-fn case_add_non_existent() {
+fn case_add_entries_non_existent() {
     let (_home_dir, tracking_file, _ignored_file, _tests_dir) = common::setup().unwrap();
 
     // The function throws an error
@@ -79,7 +79,7 @@ fn case_add_non_existent() {
 }
 
 #[test]
-fn case_add_files() {
+fn case_add_entries_files() {
     let (_home_dir, tracking_file, _ignored_file, tests_dir) = common::setup().unwrap();
 
     // The function throws an error
