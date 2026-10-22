@@ -8,7 +8,7 @@ use crate::core::api::{
     list,
     add_entries,
     remove_entries,
-    remove_all,
+    remove_app_file,
     check_repos,
     check_all
 };
@@ -145,7 +145,7 @@ async fn main() {
         },
         Commands::Rm { repos, all } => {
             if *all {
-                if let Err(e) = remove_all(&tracking_file) {
+                if let Err(e) = remove_app_file(&tracking_file) {
                     handle_error(&e, 5);
                 }
             }

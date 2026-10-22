@@ -174,13 +174,13 @@ pub fn remove_entries(mut repos: Vec<String>, app_file: &AppFile) -> Result<(), 
     Ok(())
 }
 
-/// Removes the tracking file
-pub fn remove_all(tracking_file: &AppFile) -> Result<(), String> {
-    if tracking_file.contents.is_empty() {
-        return Err(String::from("No repository is being tracked"));
+/// Removes the app file entirely
+pub fn remove_app_file(app_file: &AppFile) -> Result<(), String> {
+    if app_file.contents.is_empty() {
+        return Err(format!("The file '{}' is empty or doesn't exist yet", app_file.path));
     }
 
-    fs::remove_file(tracking_file.path.clone()).map_err(|e| format!("{}: {e}", tracking_file.path))?;
+    fs::remove_file(app_file.path.clone()).map_err(|e| format!("{}: {e}", app_file.path))?;
 
     Ok(())
 }
