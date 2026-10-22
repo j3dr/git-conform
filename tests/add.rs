@@ -1,6 +1,6 @@
 mod common;
 
-use git_conform::core::api::add;
+use git_conform::core::api::add_entries;
 
 use std::fs;
 use std::path::Path;
@@ -23,7 +23,7 @@ fn case_add_real() {
         repos.push(format!("{tests_dir}/repo{n}"));
         repos.push(format!("{tests_dir}/.hidden/repo{n}"));
     }
-    assert_eq!(add(repos, &tracking_file), Ok(()));
+    assert_eq!(add_entries(repos, &tracking_file), Ok(()));
 
     // Read the updated tracking file
     let track_file_up = fs::read_to_string(tracking_file.path).unwrap();
@@ -49,7 +49,7 @@ fn case_add_fake() {
         repos.push(format!("{tests_dir}/fake_repo{n}"));
         repos.push(format!("{tests_dir}/.hidden/fake_repo{n}"));
     }
-    assert_eq!(add(repos, &tracking_file), Err(String::from("Repositories validation failed")) );
+    assert_eq!(add_entries(repos, &tracking_file), Err(String::from("Repositories validation failed")) );
 }
 
 #[test]
@@ -62,7 +62,7 @@ fn case_add_regular_dirs() {
         repos.push(format!("{tests_dir}/dir{n}"));
         repos.push(format!("{tests_dir}/.hidden/dir{n}"));
     }
-    assert_eq!(add(repos, &tracking_file), Err(String::from("Repositories validation failed")) );
+    assert_eq!(add_entries(repos, &tracking_file), Err(String::from("Repositories validation failed")) );
 }
 
 #[test]
@@ -75,7 +75,7 @@ fn case_add_non_existent() {
         format!("lvdslns"),
         format!("fjioadbaob")
     ];
-    assert_eq!(add(repos, &tracking_file), Err(String::from("Repositories validation failed")) );
+    assert_eq!(add_entries(repos, &tracking_file), Err(String::from("Repositories validation failed")) );
 }
 
 #[test]
@@ -87,5 +87,5 @@ fn case_add_files() {
     for n in 1..=3 {
         repos.push(format!("{tests_dir}/file{n}"));
     }
-    assert_eq!(add(repos, &tracking_file), Err(String::from("Repositories validation failed")) );
+    assert_eq!(add_entries(repos, &tracking_file), Err(String::from("Repositories validation failed")) );
 }
