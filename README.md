@@ -7,7 +7,7 @@
 
 ## About
 `git-conform` is a simple git extension that helps you to keep track of the repositories on your local machine and their remote counterparts.
-It works by scanning your **home directory** (or just the ones you specified) in search for git repositories, and then storing their paths in
+It works by scanning your **home directory** with `gitcf scan --all` (or just the ones you specified) in search for git repositories, and then storing their paths in
 the tracking file located at `~/.local/share/gitcf`. By typing `gitcf check --all` you can see useful information
 about all the repositories on your machine at once such as uncommitted changes or unsynced commits between local and remote branches.
 
@@ -18,7 +18,7 @@ about all the repositories on your machine at once such as uncommitted changes o
 
 ### Using the setup shell script
 > [!IMPORTANT]  
-> Before continuing, make sure you have `wget` and `curl` installed on your system
+> Make sure you have `wget` and `curl` installed on your system
 ```bash
 bash <(curl -sSL https://raw.githubusercontent.com/j3dr/git-conform/main/setup.sh)
 ```
